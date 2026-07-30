@@ -1,0 +1,11 @@
+# Nix / System build outputs
+result
+result-*
+
+# Hardware configuration (Optional: skip if you want host-agnostic setups)
+# hardware-configuration.nix
+
+# Secrets or private keys (if any)
+*.pem
+*.key
+.env
