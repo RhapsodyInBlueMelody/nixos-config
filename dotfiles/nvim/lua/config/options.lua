@@ -24,3 +24,10 @@ options.undofile = true
 options.backup = false
 options.writebackup = false
 options.swapfile = false
+
+vim.filetype.add({
+  extension = {
+    nix = "nix",
+  },
+})
+
