@@ -5,15 +5,16 @@
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/dotfiles/nvim";
 
   home.packages = with pkgs; [
-    neovim # plain package — no home-manager-generated config, no collision
+    neovim
 
+    # Language Servers & Tools
     clang-tools
+    cppcheck
     nil
     nixfmt-rfc-style
     typescript-language-server
     vscode-langservers-extracted
     tailwindcss-language-server
-    pyright
     lua-language-server
     rust-analyzer
     gopls
@@ -22,15 +23,19 @@
     ruby-lsp
     stylua
 
+    # Linters & Formatters
     prettierd
     prettier
     eslint_d
-    ruff
     rubocop
 
+    # Python LSPs / Linters / Tools
+    pyright # Python LSP
+    ruff # Fast Python Linter & Formatter
+
+    # System Dependencies & Tools
     nodejs_22
     gcc
-    python3
     ripgrep
     fd
   ];

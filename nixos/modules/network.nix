@@ -1,6 +1,21 @@
 { config, pkgs, ... }:
 
 {
-  networking.hostName = "pudding";
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "pudding";
+    networkmanager.enable = true;
+    nameservers = [
+      "9.9.9.9#dns.quad9.net"
+      "149.112.112.112#dns.quad9.net"
+      "2620:fe::fe#dns.quad9.net"
+      "2620:fe::9#dns.quad9.net"
+    ];
+  };
+
+  # Enable systemd-resolved with Strict DNS-over-TLS
+  services.resolved = {
+    enable = true;
+    dnssec = "true";
+    dnsovertls = "true";
+  };
 }

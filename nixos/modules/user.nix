@@ -21,9 +21,13 @@
   };
 
   # Home Manager configuration for 'pudding'
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
-  home-manager.backupFileExtension = "backup";
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "backup";
+  };
+
+  programs.obs-studio.enableVirtualCamera = true;
 
   home-manager.users.pudding = { pkgs, ... }: {
     # Import modular Home Manager sub-configs
@@ -33,12 +37,17 @@
 
     home.stateVersion = "24.11";
 
+    programs.floorp = {
+      enable = true;
+    };
+
     programs.obs-studio = {
       enable = true;
       plugins = with pkgs.obs-studio-plugins; [
         wlrobs # Wayland screen capture
         obs-vaapi # Hardware acceleration
         obs-vkcapture # Game capture for Vulkan/OpenGL
+        droidcam-obs
       ];
     };
 
@@ -47,8 +56,43 @@
       lsd
       fzf
       zoxide
-      starship
+      newsboat
     ];
+
+    programs.kitty = {
+      enable = true;
+      extraConfig = ''
+        # --- Custom Settings ---
+        background_opacity 0.9
+        font_size 8.0
+        cursor_shape underline
+        hide_window_decorations yes
+        font_family DepartureMono Nerd Font
+        map ctrl+shift+t new_tab_with_cwd
+        shell tmux
+
+        # --- Gruvbox Colors ---
+        color0  #3C3836
+        color1  #EA6962
+        color2  #A9B665
+        color3  #D8A657
+        color4  #7DAEA3
+        color5  #D3869B
+        color6  #89B482
+        color7  #D4BE98
+        color8  #3C3836
+        color9  #EA6962
+        color10 #A9B665
+        color11 #D8A657
+        color12 #7DAEA3
+        color13 #D3869B
+        color14 #89B482
+        color15 #D4BE98
+        background #282828
+        foreground #D4BE98
+        cursor #D4BE98
+      '';
+    };
 
     # Native Atuin integration
     programs.atuin = {
@@ -72,6 +116,11 @@
           $username$hostname$directory($git_branch$git_status$git_state) $python$fill$status$jobs$cmd_duration$time
           $character'';
         package.disabled = true;
+
+        character = {
+          success_symbol = "[❯](bold green) ";
+          error_symbol = "[❯](bold red) ";
+        };
 
         fill = {
           symbol = " ";
@@ -209,6 +258,11 @@
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
 
+      setOptions = [
+        "INC_APPEND_HISTORY" # Write to history file immediately, not on shell exit
+        "SHARE_HISTORY" # Share history across all active zsh terminals
+      ];
+
       history.size = 10000;
 
       shellAliases = {
@@ -218,7 +272,7 @@
 
       oh-my-zsh = {
         enable = true;
-        theme = "";
+        theme = ""; # Keeps theme blank so Starship handles it cleanly
         plugins = [
           "git"
           "sudo"
@@ -239,7 +293,8 @@
         }
       ];
 
-      initContent = ''
+      # Changed from initContent to initExtra so Home Manager actually reads it!
+      initExtra = ''
         # Keybindings
         bindkey "\e[1~" beginning-of-line
         bindkey "\e[4~" end-of-line
@@ -247,9 +302,7 @@
         bindkey '^[[1;2D' backward-word
         bindkey '^[[1;2C' forward-word
 
-        # Tool initializations
-        eval "$(zoxide init zsh)"
-        eval "$(fzf --zsh)"
+        # Tool initializations (Zoxide & FZF are handled natively below)
         if command -v rbenv >/dev/null 2>&1; then eval "$(rbenv init -)"; fi
         if command -v pyenv >/dev/null 2>&1; then eval "$(pyenv init - zsh)"; fi
 
@@ -297,5 +350,13 @@
         autostart_tmux
       '';
     };
+
+    # Let Home Manager manage tool hookings natively to prevent prompt conflicts
+    programs.zoxide.enable = true;
+    programs.zoxide.enableZshIntegration = true;
+
+    programs.fzf.enable = true;
+    programs.fzf.enableZshIntegration = true;
+
   };
 }

@@ -5,6 +5,7 @@
 
   environment.systemPackages = with pkgs; [
     # Utilities & CLI Tools
+    zip
     pulseaudio
     keymapper
     wget
@@ -12,7 +13,6 @@
     tree
     bitwarden-cli
     fastfetch
-    kitty
     ffmpeg-full
     frei0r
     qalculate-gtk
@@ -24,28 +24,28 @@
     oterm
 
     # Shell tools
-    starship
     zoxide
+    jq
     atuin
     lsd
     fzf
     cava
 
     # Media & Applications
+    audacity
     tor-browser
     gimp
     inkscape
     mpv
     yt-dlp
-    vesktop
     onlyoffice-desktopeditors
     kdePackages.kdenlive
 
     # Gaming utilities
+    dolphin-emu
     mangohud
     protonup-qt
     lutris
-    wineWow64Packages.stable
   ];
 
   fonts.packages = with pkgs; [

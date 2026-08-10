@@ -10,6 +10,27 @@
   # Add your user to the libvirtd group
   users.users.pudding.extraGroups = [ "libvirtd" ];
 
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
+
+  services.keyd = {
+    enable = true;
+    keyboards = {
+      default = {
+        ids = [ "*" ]; # Matches all keyboards, including your Ajazz AK820
+        settings = {
+          main = {
+            volumedown = "scrolldown";
+            volumeup = "scrollup";
+          };
+        };
+      };
+    };
+  };
+
   boot.loader.efi = {
     canTouchEfiVariables = true;
     efiSysMountPoint = "/boot"; # Matches nvme0n1p2 mounted at /boot
@@ -30,6 +51,10 @@
 
     # For Nvidia GPUs:
     package = pkgs.ollama-cuda;
+  };
+
+  systemd.services.ollama.environment = {
+    OLLAMA_MAX_LOADED_MODELS = "1";
   };
 
   virtualisation.podman = {

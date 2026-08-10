@@ -2,21 +2,25 @@ return {
 	"olimorris/codecompanion.nvim",
 	dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter" },
 	opts = {
-		interactions = { -- verify against :h codecompanion for your installed version
-			chat = { adapter = "ollama" },
-			inline = { adapter = "ollama" },
-		},
 		adapters = {
 			http = {
-				ollama = function()
-					return require("codecompanion.adapters").extend("ollama", {
+				openwebui = function()
+					return require("codecompanion.adapters").extend("openai_compatible", {
+						env = {
+							url = "http://localhost:8080",
+							api_key = "sk-22e3da5d89354993b601484e102f81d9",
+						},
 						schema = {
-							model = { default = "qwen2.5-coder:7b-instruct-q4_K_M" },
+							model = { default = "faiz-assistant-7b:latest" },
 							num_ctx = { default = 16384 },
 						},
 					})
 				end,
 			},
+		},
+		interactions = {
+			chat = { adapter = "openwebui" },
+			inline = { adapter = "openwebui" },
 		},
 	},
 	keys = {
