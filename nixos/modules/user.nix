@@ -32,8 +32,30 @@
   home-manager.users.pudding = { pkgs, ... }: {
     # Import modular Home Manager sub-configs
     imports = [
-      ./neovim.nix
+      # ./neovim.nix
+      ./helix.nix
     ];
+
+    programs.mangohud = {
+      enable = true;
+
+      settings = {
+        # -- Size and Scaling --
+        font_size = 16; # Default is 24. Drop this to 14-16 for a much smaller footprint.
+
+        # -- Transparency --
+        background_alpha = 0.2; # 0.0 is fully invisible, 1.0 is solid black.
+        alpha = 0.8; # Makes the text itself slightly translucent.
+
+        # -- Positioning & Layout --
+        position = "top-left"; # Options: top-left, top-right, bottom-left, bottom-right.
+        hud_compact = true; # Removes some padding to tighten up the box.
+
+        # -- Optional: Stripping it down --
+        # Uncomment the line below if you literally ONLY want an FPS number and nothing else
+        # fps_only = true;
+      };
+    };
 
     home.stateVersion = "24.11";
 
@@ -57,41 +79,90 @@
       fzf
       zoxide
       newsboat
+      strawberry
+      ristretto
+      zathura
+      thunar
+
+      #Tools and Documentation
+      qalculate-gtk
+      flameshot
+      obsidian
+
+      # Gaming utilities
+      dolphin-emu
+      protonup-qt
+      lutris
+      vesktop
+
+      # Media & Applications
+      audacity
+      tor-browser
+      gimp
+      inkscape
+      mpv
+      yt-dlp
+      onlyoffice-desktopeditors
+      kdePackages.kdenlive
+
     ];
 
-    programs.kitty = {
+    programs.alacritty = {
       enable = true;
-      extraConfig = ''
-        # --- Custom Settings ---
-        background_opacity 0.9
-        font_size 8.0
-        cursor_shape underline
-        hide_window_decorations yes
-        font_family DepartureMono Nerd Font
-        map ctrl+shift+t new_tab_with_cwd
-        shell tmux
+      settings = {
+        window = {
+          opacity = 0.9;
+          decorations = "None";
+        };
 
-        # --- Gruvbox Colors ---
-        color0  #3C3836
-        color1  #EA6962
-        color2  #A9B665
-        color3  #D8A657
-        color4  #7DAEA3
-        color5  #D3869B
-        color6  #89B482
-        color7  #D4BE98
-        color8  #3C3836
-        color9  #EA6962
-        color10 #A9B665
-        color11 #D8A657
-        color12 #7DAEA3
-        color13 #D3869B
-        color14 #89B482
-        color15 #D4BE98
-        background #282828
-        foreground #D4BE98
-        cursor #D4BE98
-      '';
+        font = {
+          size = 8.0;
+          normal.family = "DepartureMono Nerd Font";
+        };
+
+        cursor.style = {
+          shape = "Underline";
+        };
+
+        terminal.shell = {
+          program = "tmux";
+
+          args = [ "new-session" "-A" "-s" "main" ];
+        };
+
+        colors = {
+          primary = {
+            background = "#282828";
+            foreground = "#D4BE98";
+          };
+
+          cursor = {
+            cursor = "#D4BE98";
+          };
+
+          normal = {
+            black = "#3C3836";
+            red = "#EA6962";
+            green = "#A9B665";
+            yellow = "#D8A657";
+            blue = "#7DAEA3";
+            magenta = "#D3869B";
+            cyan = "#89B482";
+            white = "#D4BE98";
+          };
+
+          bright = {
+            black = "#3C3836";
+            red = "#EA6962";
+            green = "#A9B665";
+            yellow = "#D8A657";
+            blue = "#7DAEA3";
+            magenta = "#D3869B";
+            cyan = "#89B482";
+            white = "#D4BE98";
+          };
+        };
+      };
     };
 
     # Native Atuin integration
@@ -276,9 +347,6 @@
         plugins = [
           "git"
           "sudo"
-          "rbenv"
-          "ruby"
-          "pip"
           "podman"
           "python"
           "command-not-found"
@@ -313,41 +381,9 @@
         zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd $realpath'
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'lsd $realpath'
 
-        # User PATH additions
-        export PATH="$HOME/.local/bin:$HOME/.local/bin/zig:$HOME/.dotnet/tools:$PATH"
-
-        # Bun & Juliaup paths if installed locally
-        export BUN_INSTALL="$HOME/.bun"
-        [ -d "$BUN_INSTALL" ] && export PATH="$BUN_INSTALL/bin:$PATH"
-        [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-        [ -d "$HOME/.juliaup/bin" ] && export PATH="$HOME/.juliaup/bin:$PATH"
-
-        # Android SDK
-        export ANDROID_HOME="$HOME/Android/Sdk"
-        export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"
-
         # Graceful Tmux Autostart Function
         autostart_tmux() {
-            if command -v tmux >/dev/null 2>&1 && \
-               [ -n "$PS1" ] && \
-               [[ "$TERM" != screen* ]] && \
-               [[ "$TERM" != tmux* ]] && \
-               [ -z "$TMUX" ] && \
-               [ "$TERM_PROGRAM" != "vscode" ] && \
-               { [ -z "$SSH_CONNECTION" ] || [ -n "$SSH_TTY" ]; }; then
-
-                if tmux has-session 2>/dev/null; then
-                    echo "Attaching to existing tmux session..."
-                    sleep 0.5
-                    exec tmux attach-session
-                else
-                    echo "Starting new tmux session..."
-                    sleep 0.5
-                    exec tmux new-session -s "main" -n "terminal"
-                fi
-            fi
         }
-        autostart_tmux
       '';
     };
 

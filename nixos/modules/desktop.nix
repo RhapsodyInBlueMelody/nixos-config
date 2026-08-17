@@ -42,14 +42,11 @@
         i3status # Status bar for i3
         i3lock # Screen locker
         picom
+        feh
         unclutter
-        thunar
         gruvbox-gtk-theme
         gruvbox-plus-icons
         lxappearance
-        strawberry
-        ristretto
-        zathura
         polybar
         xwinwrap
       ];

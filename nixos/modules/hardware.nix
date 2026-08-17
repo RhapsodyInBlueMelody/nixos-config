@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 
 {
+
+  nixpkgs.config.allowUnfree = true;
+
   # Nvidia Configuration
   services.xserver.videoDrivers = [ "nvidia" ];
   services.input-remapper.enable = true;
@@ -11,9 +14,15 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
-    open = false;
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    open = false; # Correct for Turing GTX 1650
+    package = config.boot.kernelPackages.nvidiaPackages.stable; # "latest" can occasionally introduce regression stutters in Proton
+
+    # Fix GPU clock dropping mid-game
     powerManagement.enable = false;
+    powerManagement.finegrained = false;
+
+    # Ensure dynamic power management isn't throttling performance
+    dynamicBoost.enable = false;
   };
 
   hardware.uinput.enable = true;
@@ -28,7 +37,10 @@
     ];
   };
 
-  boot.kernel.sysctl."vm.swappiness" = 10;
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 180; # Recommended for ZRAM to handle peak memory spikes smoothly
+    "vm.max_map_count" = 2147483642; # CRITICAL for modern games/Proton to prevent memory allocation hitches
+  };
 
   # Custom Storage Mounts
   fileSystems."/home" = {

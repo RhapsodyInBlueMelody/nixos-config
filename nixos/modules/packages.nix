@@ -1,25 +1,23 @@
 { config, pkgs, ... }:
 
 {
-  nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
     # Utilities & CLI Tools
+    p7zip
     zip
     pulseaudio
     keymapper
     wget
     git
+    gh
     tree
     bitwarden-cli
     fastfetch
     ffmpeg-full
     frei0r
-    qalculate-gtk
-    flameshot
     btop
     psmisc
-    obsidian
     jan
     oterm
 
@@ -31,21 +29,6 @@
     fzf
     cava
 
-    # Media & Applications
-    audacity
-    tor-browser
-    gimp
-    inkscape
-    mpv
-    yt-dlp
-    onlyoffice-desktopeditors
-    kdePackages.kdenlive
-
-    # Gaming utilities
-    dolphin-emu
-    mangohud
-    protonup-qt
-    lutris
   ];
 
   fonts.packages = with pkgs; [
