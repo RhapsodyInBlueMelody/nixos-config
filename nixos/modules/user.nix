@@ -1,6 +1,11 @@
-{ config, pkgs, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
+
   # System-level user definition
   users.users.pudding = {
     isNormalUser = true;
@@ -28,6 +33,20 @@
   };
 
   programs.obs-studio.enableVirtualCamera = true;
+
+  programs.firejail = {
+    enable = true;
+    wrappedBinaries = {
+      packettracer = {
+        executable = lib.getExe pkgs.ciscoPacketTracer9;
+        desktop = "${pkgs.ciscoPacketTracer9}/share/applications/cisco-packet-tracer-9.desktop";
+        extraArgs = [
+          "--net=none"
+          "--noprofile"
+        ];
+      };
+    };
+  };
 
   home-manager.users.pudding = { pkgs, ... }: {
     # Import modular Home Manager sub-configs
@@ -59,10 +78,6 @@
 
     home.stateVersion = "24.11";
 
-    programs.floorp = {
-      enable = true;
-    };
-
     programs.obs-studio = {
       enable = true;
       plugins = with pkgs.obs-studio-plugins; [
@@ -73,37 +88,43 @@
       ];
     };
 
-    home.packages = with pkgs; [
+    programs.firefox = {
+      enable = true;
+    };
+
+    home.packages = [
       # CLI Utilities
-      lsd
-      fzf
-      zoxide
-      newsboat
-      strawberry
-      ristretto
-      zathura
-      thunar
+      pkgs.yt-dlp
+      pkgs.ytfzf
+      pkgs.ani-cli
+      pkgs.newsboat
 
       #Tools and Documentation
-      qalculate-gtk
-      flameshot
-      obsidian
+      pkgs.thunar
+      pkgs.zeal
+      pkgs.qalculate-gtk
+      pkgs.flameshot
+      pkgs.obsidian
 
       # Gaming utilities
-      dolphin-emu
-      protonup-qt
-      lutris
-      vesktop
+      pkgs.dolphin-emu
+      pkgs.protonup-qt
+      pkgs.legcord
+      pkgs.lutris
 
       # Media & Applications
-      audacity
-      tor-browser
-      gimp
-      inkscape
-      mpv
-      yt-dlp
-      onlyoffice-desktopeditors
-      kdePackages.kdenlive
+
+      pkgs.zathura
+      pkgs.ristretto
+      pkgs.strawberry
+      pkgs.audacity
+      pkgs.tor-browser
+      pkgs.gimp
+      pkgs.inkscape
+      pkgs.mpv
+
+      pkgs.onlyoffice-desktopeditors
+      pkgs.kdePackages.kdenlive
 
     ];
 
@@ -127,7 +148,12 @@
         terminal.shell = {
           program = "tmux";
 
-          args = [ "new-session" "-A" "-s" "main" ];
+          args = [
+            "new-session"
+            "-A"
+            "-s"
+            "main"
+          ];
         };
 
         colors = {
@@ -328,6 +354,22 @@
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
+      shellAliases = {
+        # eza
+        ls = "eza --icons=always --git --group-directories-first";
+        ll = "eza -lh --icons=always --git --group-directories-first";
+        la = "eza -aH --icons=always --git";
+
+        # bat
+        cat = "bat --style=plain";
+        preview = "bat --style=numbers,changes,header";
+
+        # find, grep, df, ps
+        find = "fd";
+        grep = "rg";
+        df = "duf";
+        ps = "procs";
+      };
 
       setOptions = [
         "INC_APPEND_HISTORY" # Write to history file immediately, not on shell exit
@@ -335,11 +377,6 @@
       ];
 
       history.size = 10000;
-
-      shellAliases = {
-        cd = "z";
-        ls = "lsd --depth 1 --tree";
-      };
 
       oh-my-zsh = {
         enable = true;
@@ -387,12 +424,15 @@
       '';
     };
 
-    # Let Home Manager manage tool hookings natively to prevent prompt conflicts
-    programs.zoxide.enable = true;
-    programs.zoxide.enableZshIntegration = true;
+    programs.zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
 
-    programs.fzf.enable = true;
-    programs.fzf.enableZshIntegration = true;
+    programs.fzf = {
+      enable = true;
+      enableZshIntegration = true;
+    };
 
   };
 }

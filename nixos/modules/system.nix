@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   # Bootloader configuration
@@ -6,6 +6,10 @@
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
+
+  services.journald.extraConfig = ''
+    SystemMaxUse=100M
+  '';
 
   # Add your user to the libvirtd group
   users.users.pudding.extraGroups = [ "libvirtd" ];
@@ -42,39 +46,39 @@
     "flakes"
   ];
 
-  services.ollama = {
-    enable = true;
+  # services.ollama = {
+  #   enable = true;
 
-    # ACCELERATION CONFIGURATION (Choose ONE based on your hardware):
-    # For AMD GPUs:
-    # acceleration = "rocm";
+  #   # ACCELERATION CONFIGURATION (Choose ONE based on your hardware):
+  #   # For AMD GPUs:
+  #   # acceleration = "rocm";
 
-    # For Nvidia GPUs:
-    package = pkgs.ollama-cuda;
-  };
+  #   # For Nvidia GPUs:
+  #   package = pkgs.ollama-cuda;
+  # };
 
-  systemd.services.ollama.environment = {
-    OLLAMA_MAX_LOADED_MODELS = "1";
-  };
+  # systemd.services.ollama.environment = {
+  #   OLLAMA_MAX_LOADED_MODELS = "1";
+  # };
 
   virtualisation.podman = {
     enable = true;
     dockerCompat = true; # Maps 'docker' CLI commands directly to podman transparently
   };
 
-  virtualisation.oci-containers.backend = "podman";
+  # virtualisation.oci-containers.backend = "podman";
 
-  virtualisation.oci-containers.containers.open-webui = {
-    image = "ghcr.io/open-webui/open-webui:main";
-    environment = {
-      OLLAMA_BASE_URL = "http://127.0.0.1:11434";
-    };
-    volumes = [
-      "open-webui-data:/app/backend/data"
-      "/home/pudding/Documents/Obsidian/FaizCan Curiosity/:/data/obsidian-vault:ro"
-    ];
-    extraOptions = [ "--network=host" ];
-  };
+  # virtualisation.oci-containers.containers.open-webui = {
+  #   image = "ghcr.io/open-webui/open-webui:main";
+  #   environment = {
+  #     OLLAMA_BASE_URL = "http://127.0.0.1:11434";
+  #   };
+  #   volumes = [
+  #     "open-webui-data:/app/backend/data"
+  #     "/home/pudding/Documents/Obsidian/FaizCan Curiosity/:/data/obsidian-vault:ro"
+  #   ];
+  #   extraOptions = [ "--network=host" ];
+  # };
 
   boot.loader.grub = {
     enable = true;

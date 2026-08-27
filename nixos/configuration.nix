@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ ... }:
 
 {
   imports = [
@@ -14,6 +9,7 @@
     ./modules/network.nix
     ./modules/desktop.nix
     ./modules/packages.nix
+    ./modules/security.nix
     ./modules/gaming.nix
     ./modules/user.nix
   ];
