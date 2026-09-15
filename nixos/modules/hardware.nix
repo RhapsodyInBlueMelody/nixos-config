@@ -12,6 +12,14 @@
     wantedBy = [ "multi-user.target" ];
   };
 
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
   hardware.nvidia = {
     modesetting.enable = true;
     open = false; # Correct for Turing GTX 1650
@@ -51,4 +59,13 @@
       "noatime"
     ];
   };
+
+  # fileSystems."/mnt/games" = {
+  #   device = "/dev/disk/by-uuid/85a59a2c-d245-49d4-ba01-b7fe7f0cbac6";
+  #   fsType = "ext4";
+  #   options = [
+  #     "defaults"
+  #     "noatime"
+  #   ];
+  # };
 }

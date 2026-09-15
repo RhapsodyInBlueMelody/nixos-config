@@ -34,19 +34,19 @@
 
   programs.obs-studio.enableVirtualCamera = true;
 
-  programs.firejail = {
-    enable = true;
-    wrappedBinaries = {
-      packettracer = {
-        executable = lib.getExe pkgs.ciscoPacketTracer9;
-        desktop = "${pkgs.ciscoPacketTracer9}/share/applications/cisco-packet-tracer-9.desktop";
-        extraArgs = [
-          "--net=none"
-          "--noprofile"
-        ];
-      };
-    };
-  };
+  # programs.firejail = {
+  #   enable = true;
+  #   wrappedBinaries = {
+  #     packettracer = {
+  #       executable = lib.getExe pkgs.ciscoPacketTracer9;
+  #       desktop = "${pkgs.ciscoPacketTracer9}/share/applications/cisco-packet-tracer-9.desktop";
+  #       extraArgs = [
+  #         "--net=none"
+  #         "--noprofile"
+  #       ];
+  #     };
+  #   };
+  # };
 
   home-manager.users.pudding = { pkgs, ... }: {
     # Import modular Home Manager sub-configs
@@ -98,6 +98,7 @@
       pkgs.ytfzf
       pkgs.ani-cli
       pkgs.newsboat
+      pkgs.unzip
 
       #Tools and Documentation
       pkgs.thunar
@@ -360,6 +361,8 @@
         ll = "eza -lh --icons=always --git --group-directories-first";
         la = "eza -aH --icons=always --git";
 
+        cd = "z";
+
         # bat
         cat = "bat --style=plain";
         preview = "bat --style=numbers,changes,header";
@@ -418,9 +421,7 @@
         zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd $realpath'
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'lsd $realpath'
 
-        # Graceful Tmux Autostart Function
-        autostart_tmux() {
-        }
+        eval "$(zoxide init zsh --cmd cd)"
       '';
     };
 

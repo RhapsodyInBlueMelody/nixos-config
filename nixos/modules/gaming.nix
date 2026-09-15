@@ -5,6 +5,9 @@
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
+    extraPackages = with pkgs; [
+      gamescope
+    ];
   };
 
   programs.gamescope = {
@@ -19,6 +22,6 @@
 
   zramSwap = {
     enable = true;
-    memoryPercent = 50; # Creates ~8 GB of compressed swap in RAM
+    memoryPercent = 50;
   };
 }
