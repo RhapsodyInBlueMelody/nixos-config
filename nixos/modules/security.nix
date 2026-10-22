@@ -5,15 +5,15 @@
   environment.systemPackages = [
 
     #CyberSecurity
-    pkgs.nmap
-    pkgs.wireshark
-    pkgs.tcpdump
-    pkgs.burpsuite
-    pkgs.metasploit
-    pkgs.aircrack-ng
-    pkgs.hashcat
-    pkgs.john
-    pkgs.lynis
+    # pkgs.nmap
+    # pkgs.wireshark
+    # pkgs.tcpdump
+    # pkgs.burpsuite
+    # pkgs.metasploit
+    # pkgs.aircrack-ng
+    # pkgs.hashcat
+    # pkgs.john
+    # pkgs.lynis
     pkgs.clamav
 
   ];

@@ -5,15 +5,12 @@
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
-    extraPackages = with pkgs; [
-      gamescope
-    ];
   };
 
-  programs.gamescope = {
-    enable = true;
-    capSysNice = true;
-  };
+  # programs.gamescope = {
+  #   enable = true;
+  #   capSysNice = true;
+  # };
 
   programs.gamemode = {
     enable = true;
@@ -24,4 +21,6 @@
     enable = true;
     memoryPercent = 50;
   };
+
+  services.earlyoom.enable = true;
 }

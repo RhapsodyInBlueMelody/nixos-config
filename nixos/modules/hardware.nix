@@ -6,11 +6,6 @@
 
   # Nvidia Configuration
   services.xserver.videoDrivers = [ "nvidia" ];
-  services.input-remapper.enable = true;
-
-  systemd.services.input-remapper = {
-    wantedBy = [ "multi-user.target" ];
-  };
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -18,6 +13,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
   };
 
   hardware.nvidia = {
@@ -47,6 +43,7 @@
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 180; # Recommended for ZRAM to handle peak memory spikes smoothly
+    "vm.page-cluster" = 0;
     "vm.max_map_count" = 2147483642; # CRITICAL for modern games/Proton to prevent memory allocation hitches
   };
 

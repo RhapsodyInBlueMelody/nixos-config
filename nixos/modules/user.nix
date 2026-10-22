@@ -48,7 +48,7 @@
   #   };
   # };
 
-  home-manager.users.pudding = { pkgs, ... }: {
+  home-manager.users.pudding = { pkgs, config, ... }: {
     # Import modular Home Manager sub-configs
     imports = [
       # ./neovim.nix
@@ -85,48 +85,68 @@
         obs-vaapi # Hardware acceleration
         obs-vkcapture # Game capture for Vulkan/OpenGL
         droidcam-obs
+        obs-pipewire-audio-capture
       ];
     };
 
-    programs.firefox = {
+    programs.yazi = {
       enable = true;
+
+      settings = {
+        theme = lib.importTOML /home/pudding/.config/yazi/theme.toml;
+      };
+
+      # Home Manager scope supports the complex plugin setup attribute blocks:
+      plugins = with pkgs.yaziPlugins; {
+        full-border.package = full-border;
+        git.package = git;
+        smart-enter.package = smart-enter;
+        yatline = {
+          package = yatline;
+          setup = true;
+          settings = {
+            show_background = true;
+            tab_width = 20;
+          };
+        };
+      };
     };
 
     home.packages = [
       # CLI Utilities
       pkgs.yt-dlp
-      pkgs.ytfzf
-      pkgs.ani-cli
-      pkgs.newsboat
-      pkgs.unzip
+      pkgs.deno
 
       #Tools and Documentation
       pkgs.thunar
+      pkgs.plantuml
       pkgs.zeal
       pkgs.qalculate-gtk
       pkgs.flameshot
       pkgs.obsidian
+      pkgs.calibre
+      pkgs.zotero
+      pkgs.audacity
+      pkgs.fritzing
+      pkgs.thunderbird
 
       # Gaming utilities
       pkgs.dolphin-emu
       pkgs.protonup-qt
-      pkgs.legcord
       pkgs.lutris
+      pkgs.steamtinkerlaunch
 
       # Media & Applications
-
       pkgs.zathura
       pkgs.ristretto
-      pkgs.strawberry
-      pkgs.audacity
       pkgs.tor-browser
-      pkgs.gimp
-      pkgs.inkscape
       pkgs.mpv
+      pkgs.vlc
+      pkgs.gimp
 
-      pkgs.onlyoffice-desktopeditors
+      pkgs.telegram-desktop
+      pkgs.libreoffice-qt
       pkgs.kdePackages.kdenlive
-
     ];
 
     programs.alacritty = {
@@ -196,6 +216,9 @@
     programs.atuin = {
       enable = true;
       enableZshIntegration = true;
+      flags = [
+        "--disable-ctrl-r"
+      ];
     };
 
     # Native Starship Configuration
@@ -361,6 +384,8 @@
         ll = "eza -lh --icons=always --git --group-directories-first";
         la = "eza -aH --icons=always --git";
 
+        yz = "yazi";
+
         cd = "z";
 
         # bat
@@ -372,12 +397,8 @@
         grep = "rg";
         df = "duf";
         ps = "procs";
-      };
 
-      setOptions = [
-        "INC_APPEND_HISTORY" # Write to history file immediately, not on shell exit
-        "SHARE_HISTORY" # Share history across all active zsh terminals
-      ];
+      };
 
       history.size = 10000;
 
@@ -401,8 +422,11 @@
         }
       ];
 
-      # Changed from initContent to initExtra so Home Manager actually reads it!
-      initExtra = ''
+      initContent = ''
+        # Zsh options
+        setopt INC_APPEND_HISTORY
+        setopt SHARE_HISTORY
+
         # Keybindings
         bindkey "\e[1~" beginning-of-line
         bindkey "\e[4~" end-of-line
@@ -410,7 +434,7 @@
         bindkey '^[[1;2D' backward-word
         bindkey '^[[1;2C' forward-word
 
-        # Tool initializations (Zoxide & FZF are handled natively below)
+        # Tool initializations
         if command -v rbenv >/dev/null 2>&1; then eval "$(rbenv init -)"; fi
         if command -v pyenv >/dev/null 2>&1; then eval "$(pyenv init - zsh)"; fi
 

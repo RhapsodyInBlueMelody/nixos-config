@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   # Bootloader configuration
@@ -10,8 +10,11 @@
   options v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
 '';
 
-  virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
+  # virtualisation.libvirtd.enable = true;
+  # programs.virt-manager.enable = true;
+  
+  # # Add your user to the libvirtd group
+  # users.users.pudding.extraGroups = [ "libvirtd" ];
 
   services.journald.extraConfig = ''
     SystemMaxUse=100M
@@ -25,12 +28,6 @@
     enable = true;
     powerOnBoot = true;
   };
-
-  # Optional: Enable Blueman applet for desktop tray management
-  services.blueman.enable = true;
-
-  # Add your user to the libvirtd group
-  users.users.pudding.extraGroups = [ "libvirtd" ];
 
   nix.gc = {
     automatic = true;
@@ -52,7 +49,7 @@
       };
 
       rexus_mouse = {
-        ids = [ "32c2:6621" ]; # Matches your Rexus Clif Mouse from journalctl logs
+        ids = [ "05ac:024f" ]; # Matches your Rexus Clif Mouse from journalctl logs
         settings = {
           main = {
             mouse1 = "leftmouse"; # Maps side button 1 (back) to Left Click
@@ -94,7 +91,7 @@
     dockerCompat = true; # Maps 'docker' CLI commands directly to podman transparently
   };
 
-  # virtualisation.oci-containers.backend = "podman";
+  virtualisation.oci-containers.backend = "podman";
 
   # virtualisation.oci-containers.containers.open-webui = {
   #   image = "ghcr.io/open-webui/open-webui:main";

@@ -4,6 +4,8 @@
   programs.helix = {
     enable = true;
 
+    defaultEditor = true;
+
     # 1. Update this to use your new custom theme name
     settings = {
       theme = "gruvbox_custom";
@@ -40,7 +42,7 @@
       clang-tools
       cppcheck
       nil
-      nixfmt-rfc-style
+      nixfmt
       typescript-language-server
       vscode-langservers-extracted
       tailwindcss-language-server
