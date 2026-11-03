@@ -7,12 +7,12 @@
   boot.kernelModules = [ "v4l2loopback" ];
 
   boot.extraModprobeConfig = ''
-  options v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
-'';
+    options v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
+  '';
 
   # virtualisation.libvirtd.enable = true;
   # programs.virt-manager.enable = true;
-  
+
   # # Add your user to the libvirtd group
   # users.users.pudding.extraGroups = [ "libvirtd" ];
 
@@ -54,6 +54,8 @@
           main = {
             mouse1 = "leftmouse"; # Maps side button 1 (back) to Left Click
             mouse2 = "leftmouse"; # Maps side button 2 (forward) to Left Click
+            scrollup = "noop";
+            scrolldown = "noop";
           };
         };
       };

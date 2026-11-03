@@ -22,6 +22,10 @@
     package = pkgs.firefox;
   };
 
+  programs.thunar.plugins = with pkgs; [
+    thunar-archive-plugin
+  ];
+
   environment.systemPackages = [
     # Utilities & CLI Tools
     pkgs.hwinfo
@@ -84,6 +88,7 @@
     pkgs.mplus-outline-fonts.githubRelease
     pkgs.dina-font
     pkgs.proggyfonts
+    pkgs.google-fonts
   ];
 
   fonts.fontconfig = {

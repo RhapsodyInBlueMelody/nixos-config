@@ -14,7 +14,7 @@
     # pkgs.hashcat
     # pkgs.john
     # pkgs.lynis
-    pkgs.clamav
+    # pkgs.clamav
 
   ];
 

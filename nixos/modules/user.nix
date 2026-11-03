@@ -16,6 +16,27 @@
     ];
   };
 
+  users.users.reza = {
+    isNormalUser = true;
+    description = "Reza";
+    extraGroups = [
+      "networkmanager"
+      "audio"
+      "video"
+    ];
+    packages = with pkgs; [
+      zip
+      unzip
+      xarchiver
+      ristretto
+    ];
+    # no "wheel" = no sudo
+  };
+
+  security.pam.services.lightdm.allowNullPassword = true;
+  
+  security.pam.services.xfce4-screensaver.allowNullPassword = true;
+
   # Enable Zsh at the system level
   programs.zsh.enable = true;
 
@@ -55,6 +76,18 @@
       ./helix.nix
     ];
 
+    gtk = {
+      enable = true;
+      theme = {
+        name = "Gruvbox-Dark";
+        package = pkgs.gruvbox-gtk-theme;
+      };
+      iconTheme = {
+        name = "Gruvbox-Plus-Dark";
+        package = pkgs.gruvbox-plus-icons;
+      };
+    };
+
     programs.mangohud = {
       enable = true;
 
@@ -89,29 +122,6 @@
       ];
     };
 
-    programs.yazi = {
-      enable = true;
-
-      settings = {
-        theme = lib.importTOML /home/pudding/.config/yazi/theme.toml;
-      };
-
-      # Home Manager scope supports the complex plugin setup attribute blocks:
-      plugins = with pkgs.yaziPlugins; {
-        full-border.package = full-border;
-        git.package = git;
-        smart-enter.package = smart-enter;
-        yatline = {
-          package = yatline;
-          setup = true;
-          settings = {
-            show_background = true;
-            tab_width = 20;
-          };
-        };
-      };
-    };
-
     home.packages = [
       # CLI Utilities
       pkgs.yt-dlp
@@ -129,22 +139,24 @@
       pkgs.audacity
       pkgs.fritzing
       pkgs.thunderbird
+      pkgs.librecad
 
       # Gaming utilities
       pkgs.dolphin-emu
       pkgs.protonup-qt
       pkgs.lutris
-      pkgs.steamtinkerlaunch
+      pkgs.vesktop
 
       # Media & Applications
       pkgs.zathura
       pkgs.ristretto
-      pkgs.tor-browser
+      # pkgs.tor-browser
       pkgs.mpv
-      pkgs.vlc
-      pkgs.gimp
+      # pkgs.vlc
+      # pkgs.gimp
+      # pkgs.inkscape
 
-      pkgs.telegram-desktop
+      # pkgs.telegram-desktop
       pkgs.libreoffice-qt
       pkgs.kdePackages.kdenlive
     ];
@@ -221,127 +233,34 @@
       ];
     };
 
-    # Native Starship Configuration
     programs.starship = {
       enable = true;
       enableZshIntegration = true;
 
-      # Embed your exact TOML settings here:
       settings = {
         add_newline = false;
-        command_timeout = 1000;
-
-        # Using explicit \n to safely pass Starship variable strings to Nix
-        format = ''
-
-          $username$hostname$directory($git_branch$git_status$git_state) $python$fill$status$jobs$cmd_duration$time
-          $character'';
-        package.disabled = true;
+        format = "$character";
 
         character = {
           success_symbol = "[❯](bold green) ";
           error_symbol = "[❯](bold red) ";
         };
-
-        fill = {
-          symbol = " ";
-          style = "none";
-        };
-
-        time = {
-          disabled = false;
-          format = "[$time]($style)";
-          style = "8";
-        };
-
-        directory = {
-          truncate_to_repo = false;
-          read_only = " !w";
-          format = "[$read_only]($read_only_style)[ $path ]($style)";
-          style = "bg:blue fg:#282828 bold";
-          read_only_style = "bg:blue fg:#282828";
-          truncation_length = 10;
-        };
-
-        git_branch = {
-          style = "bg:green fg:black ";
-          format = "[ $branch ]($style)";
-        };
-
-        git_status = {
-          conflicted = "!$count";
-          ahead = "^$count";
-          behind = "v$count";
-          diverged = "^$ahead_count v$behind_count";
-          up_to_date = "";
-          untracked = " ?$count";
-          stashed = " *$count";
-          modified = " [~$count](bold yellow)";
-          staged = " [+$count](green bold)";
-          renamed = " =$count";
-          deleted = " [-$count](red)";
-          format = "[(| $ahead_behind )](bg:green black)[( $conflicted )](bg:red fg:black bold)[$staged$modified$renamed$deleted]($style)[$stashed$untracked](8)";
-          style = "yellow";
-        };
-
-        cmd_duration = {
-          format = "[$duration ](bold yellow)";
-        };
-
-        python = {
-          symbol = "py ";
-          style = "blue";
-          version_format = "v\${major}.\${minor}";
-          python_binary = [
-            "python3"
-            "python"
-          ];
-        };
-
-        nodejs = {
-          symbol = "node ";
-          style = "green";
-          version_format = "v\${major}";
-        };
-
-        status = {
-          symbol = "E";
-          disabled = false;
-        };
-
-        jobs = {
-          symbol = "*";
-          number_threshold = 2;
-        };
-
-        username = {
-          style_user = "dimmed";
-          style_root = "red bold";
-          format = "[$user]($style)";
-        };
-
-        hostname = {
-          style = "dimmed green";
-          format = "[@](dimmed)[$hostname]($style) ";
-        };
       };
     };
 
-    # Native Tmux configuration
     programs.tmux = {
       enable = true;
-
-      # Core options
       shell = "${pkgs.zsh}/bin/zsh";
+      terminal = "tmux-256color";
       mouse = true;
       baseIndex = 1;
-      shortcut = "Space"; # Automatically unbinds C-b and binds C-Space
-      keyMode = "vi"; # Automatically sets mode-keys vi
+      shortcut = "Space";
+      keyMode = "vi";
+      escapeTime = 0;
+      historyLimit = 50000;
 
-      # Nix-managed plugins
       plugins = with pkgs.tmuxPlugins; [
         sensible
-        vim-tmux-navigator
         yank
         {
           plugin = gruvbox;
@@ -349,26 +268,36 @@
         }
       ];
 
-      # Raw config for bindings and overrides
       extraConfig = ''
-        set-option -sa terminal-overrides ",xterm*:Tc"
+        set -as terminal-features ",*:RGB"
+        set -g focus-events on
 
-        # Pane Indexing & Renumbering
         set-window-option -g pane-base-index 1
         set-option -g renumber-windows on
 
-        # Alt-H / Alt-L window navigation
         bind -n M-H previous-window
         bind -n M-L next-window
 
-        # Copy mode vi bindings
         bind-key -T copy-mode-vi v send-keys -X begin-selection
         bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-        bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+        # 'y' removed: the yank plugin handles it
 
-        # Split panes retaining current directory path
+        bind c new-window -c "#{pane_current_path}"
         bind '"' split-window -v -c "#{pane_current_path}"
         bind '%' split-window -h -c "#{pane_current_path}"
+
+        # status bar (path + git branch)
+        set -g status-position bottom
+        set -g status-interval 2
+        set -g status-left-length 80
+        set -g status-right-length 80
+        set -g status-left '#[bold]#S #[nobold]│ #(echo "#{pane_current_path}" | sed "s|^$HOME|~|") '
+        set -g status-right '#(cd "#{pane_current_path}" && git branch --show-current 2>/dev/null) │ %H:%M '
+
+        bind -r h select-pane -L
+        bind -r j select-pane -D
+        bind -r k select-pane -U
+        bind -r l select-pane -R
       '';
     };
 
@@ -383,8 +312,6 @@
         ls = "eza --icons=always --git --group-directories-first";
         ll = "eza -lh --icons=always --git --group-directories-first";
         la = "eza -aH --icons=always --git";
-
-        yz = "yazi";
 
         cd = "z";
 
@@ -423,6 +350,28 @@
       ];
 
       initContent = ''
+        # --- Custom FZF Shell Helpers ---
+        # Interactively switch Git branches
+        fbr() {
+          local branch
+          branch=$(git branch -a --format='%(refname:short)' | fzf --height 40% --layout=reverse --prompt="Git Branch > ")
+          if [ -n "$branch" ]; then
+            git checkout "$branch"
+          fi
+        }
+
+        # Type 'zi' to fuzzy search & jump into any folder you've visited
+        zi() {
+          local dir
+          dir=$(zoxide query -l | fzf --height 40% --layout=reverse --prompt="Jump to > ") && cd "$dir"
+        }
+
+        # Type 'fe' to fuzzy find any file with a live bat preview and open it in Helix
+        fe() {
+          local file
+          file=$(fd --type f --hidden --follow --exclude .git | fzf --height 50% --layout=reverse --preview 'bat --style=numbers --color=always {}') && hx "$file"
+        }
+
         # Zsh options
         setopt INC_APPEND_HISTORY
         setopt SHARE_HISTORY
@@ -446,6 +395,7 @@
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'lsd $realpath'
 
         eval "$(zoxide init zsh --cmd cd)"
+
       '';
     };
 
